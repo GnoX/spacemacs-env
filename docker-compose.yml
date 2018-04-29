@@ -1,0 +1,12 @@
+version: '3'
+services:
+  spacemacs:
+    build: .
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/run/dbus:/var/run/dbus
+      - .:/mnt/workspace
+    environment:
+      - DISPLAY=unix$DISPLAY
