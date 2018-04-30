@@ -144,6 +144,7 @@
     (setq org-latex-create-formula-image-program 'imagemagick)
     (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
 
+    (setq org-hide-macro-markers t)
     (setq org-src-fontify-natively t)
     )
   )
