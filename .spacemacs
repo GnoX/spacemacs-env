@@ -17,9 +17,11 @@
                       auto-completion-enable-help-tooltip 'manual
                       :disabled-for: org)
      better-defaults
+     bibtex
      docker
      git
      helm
+     latex
      markdown
      org
      (pandoc pandoc-spacemacs-docker-disable-deps-install t)
@@ -33,11 +35,15 @@
      version-control
      vimscript
      yaml
+
+     ;; private
+     gutils
      )
    dotspacemacs-additional-packages
    '(
      all-the-icons
      all-the-icons-dired
+     cdlatex
      )
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '()
@@ -121,12 +127,25 @@
 
   (add-hook 'ranger-mode-hook 'all-the-icons-dired-mode)
   (add-hook 'text-mode-hook 'auto-fill-mode)
+  (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
   (define-key evil-normal-state-map "+" 'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map "-" 'evil-numbers/dec-at-pt)
 
   (global-git-commit-mode t)
 
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+  (with-eval-after-load 'org
+    (setq org-latex-listings 'minted)
+    (setq org-latex-pdf-process '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+
+    (setq org-latex-create-formula-image-program 'imagemagick)
+    (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
+
+    (setq org-src-fontify-natively t)
+    )
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
