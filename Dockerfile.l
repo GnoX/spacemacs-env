@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y \
       texlive-latex-extra \
       latexmk \
       python-pygments \
-      gnuplot
+      gnuplot \
+      dvipng
 
 RUN apt-get install automake \
                     imagemagick \
