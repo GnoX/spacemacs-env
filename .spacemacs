@@ -22,10 +22,14 @@
      helm
      markdown
      org
+     (pandoc pandoc-spacemacs-docker-disable-deps-install t)
      (pdf-tools pdf-tools-spacemacs-docker-disable-deps-install t)
      (ranger :variables ranger-override-dired t)
      (spell-checking :variables spell-checking-enable-by-default nil)
      (syntax-checking :variables syntax-checking-enable-by-default nil)
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom)
      version-control
      vimscript
      yaml
