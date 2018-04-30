@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+DOCKER_COMPOSE_VERSION=1.21.1
+
+WITHOUT_DOCKER=false
+WITHOUT_DOCKER_COMPOSE=false
+
+while [[ $# -gt 0 ]]; do
+    opt=$1
+    case $opt in
+        --without-docker)
+            WITHOUT_DOCKER=true
+            shift
+            ;;
+        --without-docker-compose)
+            WITHOUT_DOCKER_COMPOSE=true
+            shift
+            ;;
+    esac
+done
+
+if [ "$WITHOUT_DOCKER" = false ]; then
+   echo "Installing docker..."
+   sudo apt-get update \
+       && sudo apt-get -y install curl git \
+       && curl -fsSL get.docker.com | sh \
+       && sudo usermod -aG docker $(id -un)
+else
+    echo "Skipping docker installation"
+fi
+
+if [ "$WITHOUT_DOCKER_COMPOSE" = false ]; then
+   echo "Installing docker-compose"
+   sudo curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose \
+       && sudo chmod +x /usr/local/bin/docker-compose
+
+else
+    echo "Skipping docker-compose installation"
+fi
+
+echo "Cloning spacemacs-env repo"
+git clone https://github.com/GnoX/spacemacs-env \
+        && cd spacemacs-env \
+        && chmod +x em
+
+echo "Now you can run either sudo ./em or relog and ./em"
