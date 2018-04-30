@@ -1,12 +1,24 @@
-version: '3'
+version: '2.1'
+
 services:
   spacemacs:
-    build: .
+    image: gnoxo/spacemacs
+    build:
+      context: .
+      dockerfile: Dockerfile.spacemacs
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/machine-id:/etc/machine-id:ro
       - /var/run/dbus:/var/run/dbus
-      - .:/mnt/workspace
+      - ${WORKSPACE:-.}:/mnt/workspace
     environment:
       - DISPLAY=unix$DISPLAY
+
+  spacemacs-latex:
+    image: gnoxo/spacemacs-latex
+    build:
+      context: .
+      dockerfile: Dockerfile.l
+    extends:
+      service: spacemacs

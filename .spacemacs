@@ -22,6 +22,7 @@
      helm
      markdown
      org
+     (pdf-tools pdf-tools-spacemacs-docker-disable-deps-install t)
      (ranger :variables ranger-override-dired t)
      (spell-checking :variables spell-checking-enable-by-default nil)
      (syntax-checking :variables syntax-checking-enable-by-default nil)
@@ -42,6 +43,7 @@
 (defun dotspacemacs/init ()
   (setq-default
    dotspacemacs-elpa-https t
+   dotspacemacs-mode-line-theme 'spacemacs
    dotspacemacs-elpa-timeout 5
    dotspacemacs-check-for-update nil
    dotspacemacs-elpa-subdirectory nil
@@ -59,7 +61,7 @@
                                :size 13
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.0)
    dotspacemacs-leader-key "SPC"
    dotspacemacs-emacs-command-key "SPC"
    dotspacemacs-ex-command-key ":"
