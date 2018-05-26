@@ -1,15 +1,15 @@
 FROM gnoxo/spacemacs-env:sp-dev
 
 RUN apt-get update && apt-get install -y \
-      texlive-base \
-      texlive-latex-extra \
-      latexmk \
-      python-pygments \
-      gnuplot \
-      dvipng
+    texlive-base \
+    texlive-latex-extra \
+    latexmk \
+    python-pygments \
+    gnuplot \
+    dvipng
 
 RUN apt-get install automake \
-                    imagemagick \
+    imagemagick \
     && git clone https://github.com/politza/pdf-tools.git \
     && cd pdf-tools/server \
     && ./autobuild -i ${PWD} \
