@@ -1,4 +1,4 @@
-FROM gnoxo/spacemacs-env:sp-dev
+FROM gnoxo/spacemacs-env:plain
 
 RUN apt-get update && apt-get install -y \
     texlive-base \

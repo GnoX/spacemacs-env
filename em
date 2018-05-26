@@ -21,10 +21,10 @@ done
 
 if [ "$NO_LATEX" = true ]; then
     SERVICE=spacemacs
-    IMAGE=gnoxo/spacemacs-env:sp-dev
+    IMAGE=gnoxo/spacemacs-env:plain
 else
     SERVICE=spacemacs-latex
-    IMAGE=gnoxo/spacemacs-env:sp-latex
+    IMAGE=gnoxo/spacemacs-env:latex
 fi
 
 xhost +si:localuser:$(id -un)
