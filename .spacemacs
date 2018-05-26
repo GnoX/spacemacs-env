@@ -19,6 +19,7 @@
      better-defaults
      bibtex
      docker
+     (ess :variables ess-enable-smart-equals t)
      git
      helm
      latex
@@ -118,11 +119,12 @@
    ))
 
 (defun dotspacemacs/user-init ()
-
+  (unless (file-directory-p "~/.emacs.d/private/local/ESS")
+    (add-to-list 'load-path "~/.emacs.d/private/local/ESS/"))
   )
 
-(defun dotspacemacs/user-config ()
 
+(defun dotspacemacs/user-config ()
   (global-auto-revert-mode t)
 
   (add-hook 'ranger-mode-hook 'all-the-icons-dired-mode)
@@ -137,9 +139,17 @@
 
   (add-to-list 'org-latex-packages-alist '("" "minted"))
 
+  (add-hook 'ess-mode-hook (lambda () (ess-toggle-underscore nil)))
+
   (with-eval-after-load 'org
     (setq org-latex-listings 'minted)
     (setq org-latex-pdf-process '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (R . t)
+       (python . t)))
 
     (setq org-latex-create-formula-image-program 'imagemagick)
     (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
