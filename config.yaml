@@ -1,0 +1,158 @@
+layers:
+  install-fonts:
+    - apt-get update
+    - apt-get install curl
+    - mkdir -p $UHOME/.local/share/fonts
+    - curl -L "https://github.com/domtronn/all-the-icons.el/blob/${ALL_THE_ICONS_COMMIT}/fonts/{all-the-icons,file-icons,fontawesome,material-design-icons,octicons,weathericons}.ttf?raw=true" -o $UHOME/.local/share/fonts\#1.ttf
+    - fc-cache -fv
+    - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/* /usr/share/emacs/25.3/lisp/org/*
+  install-latex:
+    - apt-get update
+    - apt-get install -y texlive-base texlive-latex-extra latexmk python-pygments gnuplot dvipng
+    - apt-get autoremove -y
+    - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
+  install-pdf-tools:
+    - apt-get update
+    - apt-get install automake imagemagick
+    - git clone https://github.com/politza/pdf-tools.git
+    - cd pdf-tools/server
+    - ./autobuild -i ${PWD}
+    - make -s install
+    - cd ../../
+    - rm -rf pdf-tools /tmp/* /var/lib/apt/lists/* /root/.cache/*
+  install-pandoc:
+    - curl -L https://github.com/jgm/pandoc/releases/download/2.2/pandoc-2.2-1-amd64.deb -o pandoc.deb
+    - dpkg -i pandoc.deb
+    - apt-get install -f
+    - rm pandoc.deb
+    - apt-get autoremove -y
+    - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
+  install-r:
+    - apt-get update
+    - apt-get install -y r-base
+    - apt-get autoremove -y
+    - curl https://codeload.github.com/emacs-ess/ESS/tar.gz/v17.11 --output ess.tar.gz
+    - mkdir $UHOME/.emacs.d/private/local/ESS
+    - tar xvf ess.tar.gz -C $UHOME/.emacs.d/private/local/ESS --strip-components=1
+    - echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile
+    - Rscript $UHOME/install-packages.r
+    - rm ess.tar.gz $UHOME/install-packages.r
+    - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
+  install-deps:
+    - install-deps
+
+images:
+  plain:
+    dockerfile:
+      from: spacemacs/emacs25:develop
+      run_1: install-fonts
+      copy_1: plain/.spacemacs "$UHOME/.spacemacs"
+      copy_2: private "$UHOME/.emacs.d/private"
+      run_2: install-deps
+    spacemacs:
+      layers:
+        autocompletion:
+          variables:
+            - auto-completion-enable-snippets-in-popup t
+            - auto-completion-tab-key-behavior 'cycle
+            - auto-completion-return-key-behavior nil
+            - auto-completion-enable-sort-by-usage t
+            - auto-completion-complete-with-key-sequence "jk"
+            - auto-completion-enable-help-tooltip 'manual
+          disabled-for:
+            - org
+        better-defaults:
+        docker:
+        git:
+        helm:
+        org:
+        markdown:
+        ranger:
+          variables:
+            - ranger-override-dired t
+        spell-checking:
+          variables:
+            - spell-checking-enable-by-default nil
+        syntax-checking:
+          variables:
+            - syntax-checking-enable-by-default nil
+        shell:
+          variables:
+            - shell-default-height 30
+            - shell-default-position 'bottom
+        vimscript:
+        yaml:
+        gutils:
+      additional-packages:
+        - all-the-icons
+        - all-the-icons-dired
+      user-config: |
+        (global-auto-revert-mode t)
+        (add-hook 'ranger-mode-hook 'all-the-icons-dired-mode)
+
+        (add-hook 'text-mode-hook 'auto-fill-mode)
+        (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+        (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+
+        (define-key evil-normal-state-map "+" 'evil-numbers/inc-at-pt)
+        (define-key evil-normal-state-map "-" 'evil-numbers/dec-at-pt)
+
+        (global-git-commit-mode t)
+
+  latex:
+    dockerfile:
+      from: gnoxo/spacemacs-env:plain
+      copy: latex/.spacemacs "$UHOME/.spacemacs"
+      run_1: install-latex
+      run_2: install-pdf-tools
+      run_3: install-pandoc
+    spacemacs:
+      includes:
+        - plain
+      layers:
+        bibtex:
+        latex:
+        pandoc:
+          variables:
+            - pandoc-spacemacs-docker-disable-deps-install t
+        pdf-tools:
+          variables:
+            - pandoc-spacemacs-docker-disable-deps-install t
+      additional-packages:
+        - cdlatex
+      user-config: |
+        (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+        (with-eval-after-load 'org
+          (setq org-latex-listings 'minted)
+          (setq org-latex-pdf-process '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+
+          (org-babel-do-load-languages
+          'org-babel-load-languages
+          '((emacs-lisp . t)
+            (R . t)
+            (python . t)))
+
+          (setq org-latex-create-formula-image-program 'imagemagick)
+          (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
+
+          (setq org-hide-macro-markers t)
+          (setq org-src-fontify-natively t)
+          )
+  latex-r:
+    dockerfile:
+      from: gnoxo/spacemacs-env:latex
+      copy_1: latex-r/install-packages.r $UHOME/install-packages.r
+      copy_2: latex-r/.spacemacs $UHOME/.spacemacs
+      run_1: install-r
+    spacemacs:
+      includes:
+        - latex
+      layers:
+        ess:
+          variables:
+            - ess-enable-smart-equals t
+      user-config: |
+        (add-hook 'ess-mode-hook (lambda () (ess-toggle-underscore nil)))
+      user-init: |
+        (add-to-list 'load-path "~/.emacs.d/private/local/ESS/"))
