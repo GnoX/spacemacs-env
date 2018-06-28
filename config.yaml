@@ -51,7 +51,7 @@ images:
       run_2: install-deps
     spacemacs:
       layers:
-        autocompletion:
+        auto-completion:
           variables:
             - auto-completion-enable-snippets-in-popup t
             - auto-completion-tab-key-behavior 'cycle
@@ -116,7 +116,7 @@ images:
         pandoc:
           variables:
             - pandoc-spacemacs-docker-disable-deps-install t
-        pdf-tools:
+        pdf:
           variables:
             - pandoc-spacemacs-docker-disable-deps-install t
       additional-packages:

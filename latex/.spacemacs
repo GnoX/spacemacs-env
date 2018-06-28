@@ -8,13 +8,13 @@
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(
-     (autocompletion :variables
-                     auto-completion-enable-snippets-in-popup t
-                     auto-completion-tab-key-behavior 'cycle
-                     auto-completion-return-key-behavior nil
-                     auto-completion-enable-sort-by-usage t
-                     auto-completion-complete-with-key-sequence "jk"
-                     auto-completion-enable-help-tooltip 'manual  :disabled-for org)
+     (auto-completion :variables
+                      auto-completion-enable-snippets-in-popup t
+                      auto-completion-tab-key-behavior 'cycle
+                      auto-completion-return-key-behavior nil
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-complete-with-key-sequence "jk"
+                      auto-completion-enable-help-tooltip 'manual  :disabled-for org)
      better-defaults
      docker
      git
@@ -33,7 +33,7 @@
      bibtex
      latex
      (pandoc :variables pandoc-spacemacs-docker-disable-deps-install t)
-     (pdf-tools :variables pandoc-spacemacs-docker-disable-deps-install t)
+     (pdf :variables pandoc-spacemacs-docker-disable-deps-install t)
     )
    dotspacemacs-additional-packages
    '(
