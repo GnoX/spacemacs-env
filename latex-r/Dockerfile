@@ -1,6 +1,6 @@
 FROM gnoxo/spacemacs-env:latex
 
-COPY latex-r/install-packages.r $UHOME/install-packages.r
+COPY scripts/install-packages.r $UHOME/install-packages.r
 
 COPY latex-r/.spacemacs $UHOME/.spacemacs
 
