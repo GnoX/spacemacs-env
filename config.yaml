@@ -106,6 +106,7 @@ images:
       run_1: install-latex
       run_2: install-pdf-tools
       run_3: install-pandoc
+      run_4: install-deps
     spacemacs:
       includes:
         - plain
@@ -145,6 +146,7 @@ images:
       copy_1: latex-r/install-packages.r $UHOME/install-packages.r
       copy_2: latex-r/.spacemacs $UHOME/.spacemacs
       run_1: install-r
+      run_2: install-deps
     spacemacs:
       includes:
         - latex
@@ -155,4 +157,4 @@ images:
       user-config: |
         (add-hook 'ess-mode-hook (lambda () (ess-toggle-underscore nil)))
       user-init: |
-        (add-to-list 'load-path "~/.emacs.d/private/local/ESS/"))
+        (add-to-list 'load-path "~/.emacs.d/private/local/ESS/")

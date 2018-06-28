@@ -10,6 +10,7 @@ def get_layer_string(image):
     layers_string = []
     if 'layers' in image:
         for layer_name, layer in image['layers'].items():
+            layers_string.append("     ")
             if layer:
                 layers_string.append("(")
                 layers_string.append(layer_name)
@@ -17,8 +18,10 @@ def get_layer_string(image):
                     layers_string.append(" :")
                     layers_string.append(arg_name)
                     if len(arg_vals) > 1:
-                        layers_string.append("\n")
-                        layers_string.append("\n".join(arg_vals))
+                        join_str = "\n" + " " * (len(layer_name) + 7)
+                        layers_string.append(join_str)
+                        layers_string.append(join_str.join(arg_vals))
+                        layers_string.append(" ")
                     else:
                         layers_string.append(" ")
                         layers_string.append(arg_vals[0])
@@ -31,17 +34,30 @@ def get_layer_string(image):
 def get_additional_packages_string(image):
     packages = []
     for package in image['additional-packages']:
+        packages.append("     ")
         packages.append(package)
         packages.append('\n')
     return ''.join(packages)
 
 
+def pad_string(string, padding_left):
+    if string == "":
+        return ""
+    result = []
+    for line in string.splitlines():
+        result.append("\n")
+        if len(line) > 0:
+            result.append(" " * padding_left)
+            result.append(line)
+    return "".join(result)
+
+
 def generate_spacemacs_config(image):
     spacemacs = image['spacemacs']
     layers = get_layer_string(spacemacs)
-    additional_packages = get_additional_packages_string(spacemacs) if 'additional-packages' in image else ''
-    user_init = spacemacs['user-init'] if 'user-init' in spacemacs else ''
-    user_config = spacemacs['user-config'] if 'user-config' in spacemacs else ''
+    additional_packages = get_additional_packages_string(spacemacs) if 'additional-packages' in spacemacs else ''
+    user_init = pad_string(spacemacs['user-init'] if 'user-init' in spacemacs else '', 3)
+    user_config = pad_string(spacemacs['user-config'] if 'user-config' in spacemacs else '', 3)
     includes = spacemacs['includes'] if 'includes' in spacemacs else []
     return layers, additional_packages, user_init, user_config, includes
 
@@ -53,6 +69,7 @@ def write_spacemacs_config(layers, additional_packages, user_init, user_config, 
             additionalpackages=additional_packages,
             userinit=user_init,
             userconfig=user_config))
+
 
 def transform_layers(layers):
     for name, commands in layers.items():
@@ -98,7 +115,6 @@ for image_name, image in config['images'].items():
     configs[image_name] = generate_spacemacs_config(image)
     # write_spacemacs_config(*generate_spacemacs_config(image), config_string, image_name + "/.spacemacs")
     write_dockerfile(image, layers, image_name + "/")
-
 
 for image_name, config in configs.items():
     includes = config[4]

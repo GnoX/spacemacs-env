@@ -15,3 +15,5 @@ RUN apt-get update \
    && rm ess.tar.gz $UHOME/install-packages.r \
    && rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
 
+RUN install-deps
+

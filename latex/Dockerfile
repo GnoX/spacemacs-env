@@ -23,3 +23,5 @@ RUN curl -L https://github.com/jgm/pandoc/releases/download/2.2/pandoc-2.2-1-amd
    && apt-get autoremove -y \
    && rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
 
+RUN install-deps
+

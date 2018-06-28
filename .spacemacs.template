@@ -8,12 +8,10 @@
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(
-$layers
-     )
+$layers    )
    dotspacemacs-additional-packages
    '(
-$additionalpackages
-     )
+$additionalpackages    )
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '()
    dotspacemacs-install-packages 'used-only))
@@ -86,13 +84,11 @@ $additionalpackages
    dotspacemacs-whitespace-cleanup 'trailing
    ))
 
-(defun dotspacemacs/user-init ()
-$userinit
+(defun dotspacemacs/user-init ()$userinit
   )
 
 
-(defun dotspacemacs/user-config ()
-$userconfig
+(defun dotspacemacs/user-config ()$userconfig
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
