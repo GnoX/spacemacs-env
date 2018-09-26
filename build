@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+IMAGE=$1
+
+docker build -t gnoxo/spacemacs-env:$1 -f $IMAGE/Dockerfile .

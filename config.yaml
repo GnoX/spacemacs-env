@@ -2,10 +2,12 @@ layers:
   install-fonts:
     - apt-get update
     - apt-get install curl
-    - mkdir -p $UHOME/.local/share/fonts
-    - curl -L "https://github.com/domtronn/all-the-icons.el/blob/${ALL_THE_ICONS_COMMIT}/fonts/{all-the-icons,file-icons,fontawesome,material-design-icons,octicons,weathericons}.ttf?raw=true" -o $UHOME/.local/share/fonts\#1.ttf
-    - fc-cache -fv
+    - asEnvUser $UHOME/install-fonts.sh
     - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/* /usr/share/emacs/25.3/lisp/org/*
+  temp-fix-alltheicons:
+    - cd $UHOME/.emacs.d/elpa/develop/all-the-icons-2*/
+    - rm all-the-icons.el all-the-icons.elc
+    - curl https://raw.githubusercontent.com/ubolonton/all-the-icons.el/f85f6ca9bc8d84044a700e137aecacfbdf87603f/all-the-icons.el -o all-the-icons.el
   install-latex:
     - apt-get update
     - apt-get install -y texlive-base texlive-latex-extra latexmk python-pygments gnuplot dvipng
@@ -40,15 +42,45 @@ layers:
     - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
   install-deps:
     - install-deps
+  pre-install-emacs:
+    - echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf
+    - apt-get update && apt-get install bash build-essential dbus-x11 fontconfig git gzip language-pack-en-base libgl1-mesa-glx make sudo tar unzip
+    - git clone https://github.com/ncopa/su-exec.git /tmp/su-exec
+    - cd /tmp/su-exec
+    - make
+    - chmod 770 su-exec
+    - mv ./su-exec /usr/local/sbin/
+    - apt-get purge build-essential
+    - apt-get autoremove
+    - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
+  install-emacs:
+    - apt-get update && apt-get install software-properties-common
+    - apt-add-repository ppa:kelleyk/emacs
+    - apt-get update && apt-get install emacs26
+    - apt-get purge software-properties-common
+    - rm -rf /tmp/* /var/lib/apt/lists/* /root/.cache/*
+
 
 images:
+  # emacs26:
+  #   dockerfile:
+  #     from: ubuntu
+  #     env_1: NO_AT_BRIDGE=1
+  #     env_2: DEBIAN_FRONTEND noninteractive
+  #     run_1: pre-install-emacs
+  #     run_2: install-emacs
+  #     workdir: "${WORKSPACE}"
+  #     cmd: ["bash", "-c", "emacs; /bin/bash"]
+
   plain:
     dockerfile:
       from: spacemacs/emacs25:develop
+      copy_1: scripts/install_all_the_icons_fonts.sh $UHOME/install-fonts.sh
       run_1: install-fonts
-      copy_1: plain/.spacemacs "$UHOME/.spacemacs"
-      copy_2: private "$UHOME/.emacs.d/private"
+      copy_2: plain/.spacemacs "$UHOME/.spacemacs"
+      copy_3: private "$UHOME/.emacs.d/private"
       run_2: install-deps
+      run_3: temp-fix-alltheicons
     spacemacs:
       layers:
         auto-completion:
@@ -66,6 +98,9 @@ images:
         git:
         helm:
         org:
+        treemacs:
+          variables:
+            treemacs-use-filewatch-mode t
         markdown:
         ranger:
           variables:
@@ -91,7 +126,6 @@ images:
         (add-hook 'ranger-mode-hook 'all-the-icons-dired-mode)
 
         (add-hook 'text-mode-hook 'auto-fill-mode)
-        (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
         (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
         (define-key evil-normal-state-map "+" 'evil-numbers/inc-at-pt)
@@ -122,6 +156,7 @@ images:
       additional-packages:
         - cdlatex
       user-config: |
+        (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
         (add-to-list 'org-latex-packages-alist '("" "minted"))
 
         (with-eval-after-load 'org

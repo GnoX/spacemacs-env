@@ -124,13 +124,13 @@
    (add-hook 'ranger-mode-hook 'all-the-icons-dired-mode)
 
    (add-hook 'text-mode-hook 'auto-fill-mode)
-   (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
    (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
    (define-key evil-normal-state-map "+" 'evil-numbers/inc-at-pt)
    (define-key evil-normal-state-map "-" 'evil-numbers/dec-at-pt)
 
    (global-git-commit-mode t)
+   (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
    (add-to-list 'org-latex-packages-alist '("" "minted"))
 
    (with-eval-after-load 'org

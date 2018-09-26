@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-WORKSPACE=${HOME:-~}
-IMAGE=$1
+TAG=$1
+NAME=${2:-spacemacs}
+WORKSPACE=${3:-$HOME}
 
 xhost +si:localuser:$(id -un)
 
-docker run --name spacemacs \
+docker run -d --name $NAME \
     -e LC_ALL=en_US.UTF-8 \
         -e DISPLAY="unix$DISPLAY" \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
@@ -13,4 +14,4 @@ docker run --name spacemacs \
         -v /etc/machine-id:/etc/machine-id:ro \
         -v /var/run/dbus:/var/run/dbus \
         -v $WORKSPACE:/mnt/workspace \
-        $IMAGE
+        gnoxo/spacemacs-env:$TAG
